@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.convenient.iapp.dao.ConvenientDao">
+
+    <select id="getIdCardInfo" resultType="java.lang.String" parameterType="map">
+        select id_card_location from id_card where id_card_key in(#{idCardKey1},#{idCardKey2},#{idCardKey3});
+    </select>
+
+
+</mapper>
