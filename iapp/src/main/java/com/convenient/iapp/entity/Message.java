@@ -5,11 +5,10 @@ import lombok.*;
 @Data
 @Getter
 @Setter
-@Builder
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Message{
+public class Message extends BaseEntity{
 
     private int id;
     private String openId;
