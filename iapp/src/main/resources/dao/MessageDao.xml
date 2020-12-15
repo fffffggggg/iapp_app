@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.convenient.iapp.dao.MessageDao">
+
+    <resultMap id="messageResultMap" type="com.convenient.iapp.entity.Message">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="open_id" property="openId" jdbcType="VARCHAR" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="message_title" property="messageTitle" jdbcType="VARCHAR" />
+        <result column="message" property="message" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+    <insert id="save" parameterType="com.convenient.iapp.entity.Message" useGeneratedKeys="true">
+        insert into message_info (id, open_id, user_name, message_title, message, create_time)
+        values (
+            #{id, jdbcType = INTEGER},
+            #{openId, jdbcType = VARCHAR},
+            #{userName, jdbcType = VARCHAR},
+            #{messageTitle, jdbcType = VARCHAR},
+            #{message, jdbcType = VARCHAR},
+            #{createTime, jdbcType = VARCHAR}
+        )
+    </insert>
+
+    <select id="getMessageList" resultMap="messageResultMap" parameterType="com.convenient.iapp.entity.Message">
+        select
+            id, open_id, user_name, message_title, message, create_time
+        from
+            message_info
+        where
+            create_time &lt; #{endTime, jdbcType = VARCHAR}
+            <if test="null != startTime">
+                and create_time &gt; #{startTime, jdbcType = VARCHAR}
+            </if>
+            <if test="null != openId">
+                and open_id = #{openId, jdbcType = VARCHAR}
+            </if>
+            <if test="null != openId">
+                and open_id = #{openId, jdbcType = VARCHAR}
+            </if>
+            <if test="null != userName">
+                and user_name = #{userName, jdbcType = VARCHAR}
+            </if>
+    </select>
+
+    <select id="getMessageSingle" resultMap="messageResultMap" parameterType="com.convenient.iapp.entity.Message">
+        select
+            id, open_id, user_name, message_title, message, create_time
+        from
+            message_info
+        where
+            id = #{id, jdbcType = INTEGER}
+    </select>
+
+</mapper>
