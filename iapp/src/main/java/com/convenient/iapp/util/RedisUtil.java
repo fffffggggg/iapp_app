@@ -64,13 +64,9 @@ public class RedisUtil {
             if (key.length == 1) {
                 redisTemplate.delete(key[0]);
             } else {
-                
                 redisTemplate.delete(CollectionUtils.arrayToList(key));
-                
             }
-            
         }
-        
     }
         // ============================String=============================
         
@@ -266,7 +262,7 @@ public class RedisUtil {
          * hash递减
          * @param key 键
          * @param item 项
-         * @param by 要减少记(小于0)
+         * @param by 要减少几(小于0)
          * @return
          */
     public double hdecr(String key, String item, double by) {
