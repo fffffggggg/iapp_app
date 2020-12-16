@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -44,12 +45,12 @@ public class MessageController {
     })
     @RequestMapping(path = "/getMsgList", method = RequestMethod.POST)
     public String getMsgList(@RequestParam("data")String data){
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("openId", "123");
-        map.put("userName", "jac");
-        map.put("pageNo", 1);
-        map.put("pageSize", 5);
-        data = JSON.toJSONString(map);
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        map.put("openId", "123");
+//        map.put("userName", "jac");
+//        map.put("pageNo", 1);
+//        map.put("pageSize", 5);
+//        data = JSON.toJSONString(map);
         return messageService.getMessageList(data);
     }
 

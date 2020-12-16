@@ -48,7 +48,7 @@ public class HttpUtil {
             HttpURLConnection connection = (HttpURLConnection) realUrl.openConnection();
             // 设置通用的请求属性
             connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
-            connection.setRequestProperty("Charsert", DEFAULT_CHARSET);
+            connection.setRequestProperty("Charset", DEFAULT_CHARSET);
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
             connection.setRequestProperty("user-agent",

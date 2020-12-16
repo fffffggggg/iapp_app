@@ -1,6 +1,8 @@
 package com.convenient.iapp.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.convenient.iapp.common.CommonConstant;
 import com.convenient.iapp.dao.ConvenientDao;
 import com.convenient.iapp.service.ConvenientService;
 import com.convenient.iapp.util.HttpUtil;
@@ -9,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -19,54 +22,61 @@ import java.util.Map;
 @Slf4j
 public class ConvenientServiceImpl implements ConvenientService {
 
-    private final static String HTTP_PRE = "http://api.avatardata.cn/";
+    @Value("${api.juhe.phone.url}")
+    private String phoneUrl;
 
-    @Value("${avatardata.bignum.key}")
-    private String bigNumKey;
+    @Value("${api.juhe.phone.key}")
+    private String phoneKey;
 
-    @Value("${avatardata.chengyu.key}")
-    private String chengYuKey;
+    @Value("${api.juhe.postcode.url}")
+    private String postcodeUrl;
 
-    @Value("${avatardata.express.key}")
-    private String expressKey;
+    @Value("${api.juhe.postcode.key}")
+    private String postcodeKey;
 
-    @Value("${avatardata.zipcode.key}")
-    private String zipCodeKey;
+    @Value("${api.juhe.constellation.url}")
+    private String constellationUrl;
 
-    @Value("${avatardata.mobile.key}")
-    private String mobileKey;
+    @Value("${api.juhe.constellation.key}")
+    private String constellationKey;
 
     @Autowired
     private ConvenientDao convenientDao;
 
     @Override
-    public String getLocationByMobile(String mobile) {
+    public String getLocationByMobile(String requestData) {
+        Map<String, Object> returnMap = new HashMap<String, Object>();
         try {
+            Map<String, String> requestMap = JSONObject.parseObject(requestData, Map.class);
+            String mobile = requestMap.get("mobile");
             StringBuffer sb = new StringBuffer();
             String returnStr = null;
-            sb.append(HTTP_PRE).append("MobilePlace/LookUp?key=").append(mobileKey).append("&mobileNumber=").append(mobile);
+            sb.append(phoneUrl).append("?key=").append(phoneKey).append("&phone=").append(mobile);
             String url = sb.toString();
             String response = HttpUtil.doGet(url);
             //将response转为map 取出返回值 然后返回
             Map<String,Object> map = JSONObject.parseObject(response, Map.class);
             Object paramMapStr = map.get("result");
             if(!StringUtils.isEmpty(paramMapStr)){
-                Map<String, Object> pMap = JSONObject.parseObject(paramMapStr.toString(), Map.class);
-                if(!StringUtils.isEmpty(pMap.get("mobilearea"))) {
-                    returnStr = pMap.get("mobilearea").toString();
-                }
+                returnMap.put("data", paramMapStr);
+                returnMap.put("code", CommonConstant.RETURN_CODE_SUCCESS);
+            }else{
+                returnMap.put("code", CommonConstant.RETURN_CODE_FAIL);
             }
-            //将response转为map 取出返回值 然后返回
-            return returnStr;
         } catch (Exception e) {
             log.error("getLocationByMobile", e);
+            returnMap.put("code", CommonConstant.RETURN_CODE_EXCEPTION);
+        }finally {
+            return JSON.toJSONString(returnMap);
         }
-        return null;
     }
 
     @Override
-    public String getLocationByIdCard(String idCard) {
+    public String getLocationByIdCard(String requestData) {
+        Map<String, Object> returnMap = new HashMap<String, Object>();
         try {
+            Map<String, String> requestMap = JSONObject.parseObject(requestData, Map.class);
+            String idCard = requestMap.get("idCard");
             if(IdentityUtil.isLegalPattern(idCard)){
                 StringBuilder sb = new StringBuilder();
                 String idCardKey1 = idCard.substring(0, 2);
@@ -80,98 +90,83 @@ public class ConvenientServiceImpl implements ConvenientService {
                 for(String str : idCardLocationList){
                     sb.append(str);
                 }
-                return sb.toString();
+                returnMap.put("data", sb);
+                returnMap.put("code", CommonConstant.RETURN_CODE_SUCCESS);
             }else{
-                return "请输入正确身份证号！";
+                returnMap.put("code", CommonConstant.RETURN_CODE_FAIL);
+                returnMap.put("msg", "请输入正确的身份证号");
             }
         } catch (Exception e) {
+            returnMap.put("code", CommonConstant.RETURN_CODE_EXCEPTION);
             log.error("getLocationByIdCard", e);
+        } finally {
+            return JSON.toJSONString(returnMap);
         }
-        return null;
     }
 
-    @Override
-    public String getLocationByExpress(String expressCom, String expressNum) {
-        StringBuffer sb = new StringBuffer();
-        String returnStr = null;
-        sb.append(HTTP_PRE).append("ExpressNumber/Lookup?key=").append(expressKey).append("&company=").append(expressCom).append("&id").append(expressNum);
-        String url = sb.toString();
-        String response = HttpUtil.doGet(url);
-        return returnStr;
-    }
 
     @Override
-    public String getLocationByZipCode(String zipCode) {
+    public String getLocationByZipCode(String requestData) {
+        Map<String, Object> returnMap = new HashMap<String, Object>();
         try {
+            Map<String, String> requestMap = JSONObject.parseObject(requestData, Map.class);
+            String zipCode = requestMap.get("zipCode");
+
             StringBuffer sb = new StringBuffer();
             String returnStr = null;
-            sb.append(HTTP_PRE).append("PostNumber/QueryPostnumber?key=").append(zipCodeKey).append("&rows=1&postnumber=").append(zipCode);
+            sb.append(postcodeUrl).append("?key=").append(postcodeKey).append("&pageNo=1&pageSize=1&postcode=").append(zipCode);
             String url = sb.toString();
             String response = HttpUtil.doGet(url);
             //将response转为map 取出返回值 然后返回
             Map<String,Object> map = JSONObject.parseObject(response, Map.class);
             Object paramListStr = map.get("result");
             if (!StringUtils.isEmpty(paramListStr)) {
-                List<Map<String, Object>> list = JSONObject.parseObject(paramListStr.toString(), List.class);
-                for(Map<String, Object> pMap : list){
-                    if(!StringUtils.isEmpty(pMap.get("jd")))
-                        returnStr = pMap.get("jd").toString();
+                Map<String, Object> postMap = JSONObject.parseObject(paramListStr.toString(), Map.class);
+                List<Map<String, Object>> list = (List<Map<String, Object>>)postMap.get("list");
+
+                if(!CollectionUtils.isEmpty(list)){
+                    Map<String, Object> paramMap = list.get(0);
+                    paramMap.remove("Address");
+                    returnMap.put("data", paramMap);
+                    returnMap.put("code", CommonConstant.RETURN_CODE_SUCCESS);
+                }else{
+                    returnMap.put("code", CommonConstant.RETURN_CODE_FAIL);
                 }
             }
-            return returnStr;
         } catch (Exception e) {
+            returnMap.put("code", CommonConstant.RETURN_CODE_EXCEPTION);
             log.error("getLocationByZipCode", e);
+        }finally {
+            return JSON.toJSONString(returnMap);
         }
-        return null;
     }
 
     @Override
-    public String getBigNumByNumber(String number) {
+    public String getFortuneByConstellation(String requestData) {
+        Map<String, Object> returnMap = new HashMap<String, Object>();
         try {
+            Map<String, String> requestMap = JSONObject.parseObject(requestData, Map.class);
+            String constellation = requestMap.get("constellation");
+            String type = requestMap.get("type");
+            String constellationStr = new String(CommonConstant.CONSTELLATION_MAP.get(constellation).getBytes("utf-8"),"gbk");
             StringBuffer sb = new StringBuffer();
-            String returnStr = null;
-            sb.append(HTTP_PRE).append("CnMoney/Convert?key=").append(bigNumKey).append("&money=").append(number);
-            String url = sb.toString();
-
-            String response = HttpUtil.doGet(url);
-            //将response转为map 取出返回值 然后返回
-            Map<String,Object> map = JSONObject.parseObject(response, Map.class);
-            Object result = map.get("result");
-            if (!StringUtils.isEmpty(result)) {
-                returnStr = result.toString();
-            }
-            return returnStr;
-        } catch (Exception e) {
-            log.error("getBigNumByNumber", e);
-        }
-        return null;
-    }
-
-    @Override
-    public String getIdiomBySingleWord(String word) {
-        try {
-            StringBuffer sb = new StringBuffer();
-            String returnStr = null;
-            sb.append(HTTP_PRE).append("ChengYu/Search?key=").append(chengYuKey).append("&rows=10&keyWord=").append(word);
+            sb.append(constellationUrl).append("?key=").append(constellationKey).append("&consName=").append(constellationStr).append("&type=").append(type);
             String url = sb.toString();
             String response = HttpUtil.doGet(url);
             //将response转为map 取出返回值 然后返回
             Map<String,Object> map = JSONObject.parseObject(response, Map.class);
-            Object paramListStr = map.get("result");
-            if (!StringUtils.isEmpty(paramListStr)) {
-                sb = new StringBuffer();
-                List<Map<String, Object>> list = JSONObject.parseObject(paramListStr.toString(), List.class);
-                for(Map<String, Object> pMap : list){
-                    sb.append(pMap.get("name")).append(";");
-                }
+
+            if(!StringUtils.isEmpty(map)){
+                returnMap.put("data", map);
+                returnMap.put("code", CommonConstant.RETURN_CODE_SUCCESS);
+            }else {
+                returnMap.put("code", CommonConstant.RETURN_CODE_FAIL);
             }
-            if(!StringUtils.isEmpty(sb)){
-                returnStr = sb.toString().substring(0, sb.toString().length() - 1);
-            }
-            return returnStr;
         } catch (Exception e) {
-            log.error("getIdiomBySingleWord", e);
+            log.error("getFortuneByConstellation", e);
+            returnMap.put("code", CommonConstant.RETURN_CODE_EXCEPTION);
+        }finally {
+            return JSON.toJSONString(returnMap);
         }
-        return null;
     }
 }

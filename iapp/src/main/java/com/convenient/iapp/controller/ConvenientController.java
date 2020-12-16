@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
-
 @RestController
 @RequestMapping(path = "/query")
 @Slf4j
@@ -21,53 +19,62 @@ public class ConvenientController {
     @Autowired
     private ConvenientService convenientService;
 
-    @ApiOperation("根据汉字联想成语")
+    /*@ApiOperation("根据汉字联想成语")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "word", value = "汉字", defaultValue = "一")
+            @ApiImplicitParam(name = "requestData", value = "json", defaultValue = "")
     })
-    @RequestMapping(path = "/getIdiomBySingleWord", method = RequestMethod.GET)
-    public String getIdiomBySingleWord(@RequestParam("word")String word){
-        return convenientService.getIdiomBySingleWord(word);
-    }
+    @RequestMapping(path = "/getIdiomBySingleWord", method = RequestMethod.POST)
+    public String getIdiomBySingleWord(@RequestParam("requestData")String requestData){
+        return convenientService.getIdiomBySingleWord(requestData);
+    }*/
 
-    @ApiOperation("数字转化为大写汉字")
+    /*@ApiOperation("数字转化为大写汉字")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "number", value = "数字", defaultValue = "123")
+            @ApiImplicitParam(name = "requestData", value = "json", defaultValue = "")
     })
-    @RequestMapping(path = "/getBigNumByNumber", method = RequestMethod.GET)
-    public String getBigNumByNumber(@RequestParam("number")String number){
-        return convenientService.getBigNumByNumber(number);
-    }
+    @RequestMapping(path = "/getBigNumByNumber", method = RequestMethod.POST)
+    public String getBigNumByNumber(@RequestParam("requestData")String requestData){
+        return convenientService.getBigNumByNumber(requestData);
+    }*/
 
-    @RequestMapping(path = "/getLocationByExpress", method = RequestMethod.GET)
-    public String getLocationByExpress(@RequestParam("expressCom")String expressCom,@RequestParam("expressNum")String expressNum){
-        return convenientService.getLocationByExpress(expressCom, expressNum);
-    }
+//    @RequestMapping(path = "/getLocationByExpress", method = RequestMethod.POST)
+   /* public String getLocationByExpress(@RequestParam("requestData")String requestData){
+        return convenientService.getLocationByExpress(null, null);
+    }*/
 
     @ApiOperation("根据身份证查找归属地")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "idCard", value = "身份证号码", defaultValue = "100101197301012011")
+            @ApiImplicitParam(name = "requestData", value = "json", defaultValue = "")
     })
-    @RequestMapping(path = "/getLocationByIdCard", method = RequestMethod.GET)
-    public String getLocationByIdCard(@RequestParam("idCard")String idCard){
-        return convenientService.getLocationByIdCard(idCard);
+    @RequestMapping(path = "/getLocationByIdCard", method = RequestMethod.POST)
+    public String getLocationByIdCard(@RequestParam("requestData")String requestData){
+        return convenientService.getLocationByIdCard(requestData);
     }
 
     @ApiOperation("根据手机号查找归属地")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "mobile", value = "手机号码", defaultValue = "13011223344")
+            @ApiImplicitParam(name = "requestData", value = "json", defaultValue = "")
     })
-    @RequestMapping(path = "/getLocationByMobile", method = RequestMethod.GET)
-    public String getLocationByMobile(@RequestParam("mobile")String mobile){
-        return convenientService.getLocationByMobile(mobile);
+    @RequestMapping(path = "/getLocationByMobile", method = RequestMethod.POST)
+    public String getLocationByMobile(@RequestParam("requestData")String requestData){
+        return convenientService.getLocationByMobile(requestData);
     }
 
     @ApiOperation("根据邮政编码查找归属地")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "zipCode", value = "邮政编码", defaultValue = "100000")
+            @ApiImplicitParam(name = "requestData", value = "json", defaultValue = "")
     })
-    @RequestMapping(path = "/getLocationByZipCode", method = RequestMethod.GET)
-    public String getLocationByZipCode(@RequestParam("zipCode")String zipCode){
-        return convenientService.getLocationByZipCode(zipCode);
+    @RequestMapping(path = "/getLocationByZipCode", method = RequestMethod.POST)
+    public String getLocationByZipCode(@RequestParam("requestData")String requestData){
+        return convenientService.getLocationByZipCode(requestData);
+    }
+
+    @ApiOperation("根据星座查运势")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "requestData", value = "json", defaultValue = "")
+    })
+    @RequestMapping(path = "/getFortuneByConstellation", method = RequestMethod.POST)
+    public String getFortuneByConstellation(@RequestParam("requestData")String requestData){
+        return convenientService.getFortuneByConstellation(requestData);
     }
 }
