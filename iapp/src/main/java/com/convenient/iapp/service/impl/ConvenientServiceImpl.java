@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,9 @@ import java.util.Map;
 @Service
 @Slf4j
 public class ConvenientServiceImpl implements ConvenientService {
+
+    private static String LOCATION_1 = "市辖区";
+    private static String LOCATION_2 = "县";
 
     @Value("${api.juhe.phone.url}")
     private String phoneUrl;
@@ -50,7 +54,6 @@ public class ConvenientServiceImpl implements ConvenientService {
             Map<String, String> requestMap = JSONObject.parseObject(requestData, Map.class);
             String mobile = requestMap.get("mobile");
             StringBuffer sb = new StringBuffer();
-            String returnStr = null;
             sb.append(phoneUrl).append("?key=").append(phoneKey).append("&phone=").append(mobile);
             String url = sb.toString();
             String response = HttpUtil.doGet(url);
@@ -88,6 +91,10 @@ public class ConvenientServiceImpl implements ConvenientService {
                 queryMap.put("idCardKey3",idCardKey3);
                 List<String> idCardLocationList = convenientDao.getIdCardInfo(queryMap);
                 for(String str : idCardLocationList){
+                    if(LOCATION_1.equals(str))
+                        continue;
+                    if(LOCATION_2.equals(str))
+                        continue;
                     sb.append(str);
                 }
                 returnMap.put("data", sb);
