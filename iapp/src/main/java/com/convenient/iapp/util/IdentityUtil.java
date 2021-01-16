@@ -1,5 +1,7 @@
 package com.convenient.iapp.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 /**
@@ -62,6 +64,16 @@ public class IdentityUtil {
             return false;
         }
     }
+
+    public static boolean idLeaglePre(String idPre){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(idPre);
+        if( !isNum.matches() || idPre.length() < 6){
+            return false;
+        }
+        return true;
+    }
+
 }
 
 

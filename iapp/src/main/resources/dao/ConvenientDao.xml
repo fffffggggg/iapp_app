@@ -3,8 +3,30 @@
 <mapper namespace="com.convenient.iapp.dao.ConvenientDao">
 
     <select id="getIdCardInfo" resultType="java.lang.String" parameterType="map">
-        select id_card_location from id_card where id_card_key in(#{idCardKey1},#{idCardKey2},#{idCardKey3});
+        select id_card_location from id_card where id_card_key in(#{idCardKey1},#{idCardKey2},#{idCardKey3})
     </select>
 
+    <insert id="insertRainbow" parameterType="map">
+        insert into rainbow_word value (#{id}, #{word})
+    </insert>
 
+    <insert id="insertPyqwn" parameterType="map">
+        insert into pyqwa value (#{id}, #{word})
+    </insert>
+
+    <select id="checkPyqwaIfexist" resultType="int" parameterType="string">
+        select count(*) from pyqwa where word = #{content}
+    </select>
+
+    <select id="checkRainbowIfexist" resultType="int" parameterType="string">
+        select count(*) from rainbow_word where word = #{content}
+    </select>
+
+    <select id="getZipcodeByArea" resultType="string" parameterType="map">
+        select post_code from postcode where province = #{province} and city = #{city} and area = #{area}
+    </select>
+
+    <select id="getCityList" resultType="map" >
+        select id, name, pid from china
+    </select>
 </mapper>
